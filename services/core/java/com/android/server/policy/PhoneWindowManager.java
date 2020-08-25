@@ -472,6 +472,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     boolean mFocusReleasedGoToSleep;
     boolean mIsFocusPressed;
     boolean mIsLongPress;
+    
+    private boolean mHomeButtonWake = false;
 
     // Assigned on main thread, accessed on UI thread
     volatile VrManagerInternal mVrManagerInternal;
@@ -2168,6 +2170,8 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         // Double-tap-to-doze
         mNativeDoubleTapToDozeAvailable = !TextUtils.isEmpty(
                 mContext.getResources().getString(R.string.config_dozeDoubleTapSensorType));
+                // Home button Wake Check
+                mHomeButtonWake = mContext.getResources().getBoolean(R.bool.config_enableHomeButtonWake);
         // Init display burn-in protection
         boolean burnInProtectionEnabled = context.getResources().getBoolean(
                 com.android.internal.R.bool.config_enableBurnInProtection);
@@ -4695,7 +4699,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 }
                 // Don't allow key events from hw keys when navbar is enabled.
                 return 0;
-            } else if (interactive) {
+            } else if (interactive && !mHomeButtonWake) {
                 if (!down) {
                     // Make sure we consume hw key events properly. Discard them
                     // here if the event is already been consumed. This case can
@@ -5042,7 +5046,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             case KeyEvent.KEYCODE_HOME:
-                if (down && !interactive && mHomeWakeScreen) {
+                if (down && !interactive && mHomeButtonWake) {
                     isWakeKey = true;
                 }
                 break;

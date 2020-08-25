@@ -299,5 +299,8 @@
 
     <!-- Default fod pressed icon -->
     <java-symbol type="integer" name="config_pressed_fod_icon" />
+     
+    <!-- Home button wake -->
+    <java-symbol type="bool" name="config_enableHomeButtonWake" /> 
 
 </resources>
